@@ -14,7 +14,7 @@ Based on this ULR, the service implements the following endpoints:
 
 Also, it gives the following responses:
 
-- `/players/-1` &mdash; not found error
+- `/players/-1` &mdash; all invalid IDs like this one give a not found error
 - `/blob` &mdash; all undefined endpoints like this one give a (n uninformative) error message
 
 It is based on the [standard Azure App Service tutorial for Node.js](https://learn.microsoft.com/en-us/azure/app-service/quickstart-nodejs?tabs=linux&pivots=development-environment-cli).
