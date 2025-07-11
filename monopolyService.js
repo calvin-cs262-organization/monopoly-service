@@ -2,10 +2,10 @@
 /* eslint-disable no-console */
 /* eslint-disable no-use-before-define */
 /**
- * This module implements a REST-inspired webservice for the Monopoly DB.
- * The database is hosted on ElephantSQL.
+ * This module implements a REST-inspired web service for the Monopoly DB.
+ * The database is hosted on PostgreSQL for Azure.
  *
- * Currently, the service supports the player table only.
+ * Currently, the service is written in JS and supports the player table only.
  *
  * To guard against SQL injection attacks, this code uses pg-promise's built-in
  * variable escaping. This prevents a client from issuing this URL:
@@ -16,13 +16,14 @@
  * TODO: Consider using Prepared Statements.
  *      https://vitaly-t.github.io/pg-promise/PreparedStatement.html
  *
- * This service assumes that the database connection strings and the server mode are
- * set in environment variables. See the DB_* variables used by pg-promise. And
- * setting NODE_ENV to production will cause ExpressJS to serve up uninformative
+ * This service assumes that the database connection strings and the server mode
+ * are set in environment variables. See the DB_* variables used by pg-promise.
+ * And setting NODE_ENV to production will cause ExpressJS to serve up uninformative
  * server error responses for all errors.
  *
  * @author: kvlinden
  * @date: Summer, 2020
+ * @date: Fall, 2025 (updated for current Azure/Node versions)
  */
 
 // Set up the database connection.
