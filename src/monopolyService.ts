@@ -126,6 +126,8 @@ function updatePlayer(request: Request, response: Response, next: NextFunction):
         });
 }
 
+// Creating a new player requires generating a new ID, which this function assumes
+// is being done automatically by the database when using the INSERT statement.
 function createPlayer(request: Request, response: Response, next: NextFunction): void {
     db.one('INSERT INTO Player(email, name) VALUES (${email}, ${name}) RETURNING id',
         request.body as PlayerInput
@@ -139,8 +141,18 @@ function createPlayer(request: Request, response: Response, next: NextFunction):
         });
 }
 
+// Deleting a player is a bit more complex because it requires deleting
+// all PlayerGame records that reference this player first.
 function deletePlayer(request: Request, response: Response, next: NextFunction): void {
-    db.oneOrNone('DELETE FROM Player WHERE id=${id} RETURNING id', request.params)
+    // Use a transaction (tx) to ensure that both deletions succeed or fail together.
+    db.tx((t) => {
+        // First delete all PlayerGame records that reference this player
+        return t.none('DELETE FROM PlayerGame WHERE playerID=${id}', request.params)
+            .then(() => {
+                // Then delete the player record itself.
+                return t.oneOrNone('DELETE FROM Player WHERE id=${id} RETURNING id', request.params);
+            });
+    })
         .then((data: { id: number } | null): void => {
             returnDataOr404(response, data);
         })
