@@ -2,7 +2,7 @@
  * This module implements a REST-inspired web service for the Monopoly DB.
  * The database is hosted on PostgreSQL for Azure. Implementation notes:
  *
- * - Currently, the service is written in JS and supports the Player table only.
+ * - Currently, the service supports the Player table only.
  *
  * - The service assumes that the database connection strings and the server
  * mode are set in environment variables. See the DB_* variables used by
@@ -22,9 +22,14 @@
  * doesn't reveal database details to clients), but also makes it more difficult
  * for API users (because they don't get useful error messages).
  *
+ * - The DELETE endpoint implements a "hard" delete, which actually deletes the
+ * record from the database. In production systems, it's common to implement
+ * "soft" deletes instead, where a record is marked as deleted/archived but is
+ * not actually removed from the database.
+ *
  * @author: kvlinden
  * @date: Summer, 2020
- * @date: Fall, 2025 (updated documentation and Node version)
+ * @date: Fall, 2025 (updated Node version, JS->TSX, master->main)
  */
 
 // Set up the database connection.
