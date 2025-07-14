@@ -1,0 +1,17 @@
+-- Simple curl tests of the player API endpoints.
+
+curl --request GET \
+        https://cs262-webservice.azurewebsites.net/players
+
+curl --request POST \
+        --header "Content-Type: application/json" \
+        --data '{"name":"test name...", "email":"test email..."}' \
+        https://cs262-webservice.azurewebsites.net/players
+
+curl --request PUT \
+        --header "Content-Type: application/json" \
+        --data '{"name":"new test name...", "email":"new test email..."}' \
+        https://cs262-webservice.azurewebsites.net/players/4
+
+curl --request DELETE \
+        https://cs262-webservice.azurewebsites.net/players/4
