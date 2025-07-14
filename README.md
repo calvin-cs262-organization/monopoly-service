@@ -4,9 +4,9 @@ This is the data service application for the
 [CS 262 sample Monopoly project](https://github.com/calvin-cs262-organization/monopoly-project),
  which is deployed here:
 
-- <https://cs262-webservice.azurewebsites.net/>
+- <https://cs262-webservice.azurewebsites.net/><br>(This URL may vary from year to year.)
 
-Based on this ULR, the service implements the following endpoints:
+Based on this URL, the service implements the following endpoints:
 
 - `/` &mdash; a hello message
 - `/players` &mdash; a list of players
