@@ -127,7 +127,7 @@ function updatePlayer(request: Request, response: Response, next: NextFunction):
 }
 
 function createPlayer(request: Request, response: Response, next: NextFunction): void {
-    db.one('INSERT INTO Player(email, name) VALUES (${body.email}, ${body.name}) RETURNING id',
+    db.one('INSERT INTO Player(email, name) VALUES (${email}, ${name}) RETURNING id',
         request.body as PlayerInput
     )
         .then((data: { id: number }): void => {
@@ -140,9 +140,7 @@ function createPlayer(request: Request, response: Response, next: NextFunction):
 }
 
 function deletePlayer(request: Request, response: Response, next: NextFunction): void {
-    db.oneOrNone('DELETE FROM Player WHERE id=${params.id} RETURNING id',
-        request.params
-    )
+    db.oneOrNone('DELETE FROM Player WHERE id=${id} RETURNING id', request.params)
         .then((data: { id: number } | null): void => {
             returnDataOr404(response, data);
         })

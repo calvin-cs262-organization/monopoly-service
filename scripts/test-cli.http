@@ -1,17 +1,19 @@
 -- Simple curl tests of the player API endpoints.
 
+export SERVICE_URL=https://cs262-egbefbd4aae2h0df.canadacentral-01.azurewebsites.net
+
 curl --request GET \
-        https://cs262-webservice.azurewebsites.net/players
+        ${SERVICE_URL}/players
 
 curl --request POST \
         --header "Content-Type: application/json" \
         --data '{"name":"test name...", "email":"test email..."}' \
-        https://cs262-webservice.azurewebsites.net/players
+        ${SERVICE_URL}/players
 
 curl --request PUT \
         --header "Content-Type: application/json" \
         --data '{"name":"new test name...", "email":"new test email..."}' \
-        https://cs262-webservice.azurewebsites.net/players/4
+        ${SERVICE_URL}/players/4
 
 curl --request DELETE \
-        https://cs262-webservice.azurewebsites.net/players/4
+        ${SERVICE_URL}/players/4
