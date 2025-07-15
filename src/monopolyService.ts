@@ -1,39 +1,35 @@
 /**
- * This module implements a REST-inspired web service for the Monopoly DB.
- * The database is hosted on PostgreSQL for Azure. Notes:
+ * This module implements a REST-inspired web service for the Monopoly DB hosted
+ * on PostgreSQL for Azure. Notes:
  *
  * - Currently, this service supports the Player table only.
  *
  * - This service is written in TypeScript and uses Node type-stripping, which
  * is experimental, but simple (see: https://nodejs.org/en/learn/typescript/run-natively).
- * To run static type check, run `npm run type-check`.
+ * To do a static type check, run the following:
+ *      npm run type-check
  *
  * - The service assumes that the database connection strings and the server
- * mode are set in environment variables. See the DB_* variables used by
- * pgPromise.
+ * mode are set in environment variables (e.g., using a git-ignored `.env.sh` file).
+ * See the DB_* variables used by pgPromise.
+ *
+ * - To execute locally, run the following:
+ *      source .env.sh
+ *      npm start
  *
  * - To guard against SQL injection attacks, this code uses pgPromise's built-in
  * variable escaping. This prevents a client from issuing this SQL-injection URL:
- *     https://cs262.azurewebsites.net/players/1%3BDELETE%20FROM%20PlayerGame%3BDELETE%20FROM%20Player
+ *     `https://cs262.azurewebsites.net/players/1;DELETE FROM Player`
  * which would delete records in the PlayerGame and then the Player tables.
  * In particular, we don't use JS template strings because this doesn't filter
  * client-supplied values properly.
  *
- * - The endpoints call `next(err)` to handle errors so that the service doesn't
- * crash. This initiates the default error handling middleware, which logs full
- * error details to the server-side console and returns uninformative HTTP 500
+ * - The endpoints call `next(err)` to handle errors without crashing the service.
+ * This initiates the default error handling middleware, which logs full error
+ * details to the server-side console and returns uninformative HTTP 500
  * responses to clients. This makes the service a bit more secure (because it
  * doesn't reveal database details to clients), but also makes it more difficult
  * for API users (because they don't get useful error messages).
- *
- * - The DELETE endpoint implements a "hard" delete, which actually deletes the
- * record from the database. In production systems, it's common to implement
- * "soft" deletes instead, where a record is marked as deleted/archived but is
- * not actually removed from the database.
- *
- * To execute locally, run the following in Linux:
- *      source .env
- *      npm start
  *
  * @author: kvlinden
  * @date: Summer, 2020
@@ -75,9 +71,11 @@ app.listen(port, (): void => {
     console.log(`Listening on port ${port}`);
 });
 
-// Utility functions
-
-// This function returns 404 errors for database return data that could be null.
+/**
+ * This utility function standardizes the response pattern for database queries,
+ * returning the data using the given response, or a 404 status for null data
+ * (e.g., when a record is not found).
+ */
 function returnDataOr404(response: Response, data: unknown): void {
     if (data == null) {
         response.sendStatus(404);
@@ -86,12 +84,19 @@ function returnDataOr404(response: Response, data: unknown): void {
     }
 }
 
-// CRUD functions
-
+/**
+ * This endpoint returns a simple hello-world message, serving as a basic
+ * health check and welcome message for the API.
+ */
 function readHello(_request: Request, response: Response): void {
     response.send('Hello, CS 262 Monopoly service!');
 }
 
+// CRUD functions
+
+/**
+ * Retrieves all players from the database.
+ */
 function readPlayers(_request: Request, response: Response, next: NextFunction): void {
     db.manyOrNone('SELECT * FROM Player')
         .then((data: Player[]): void => {
@@ -103,6 +108,9 @@ function readPlayers(_request: Request, response: Response, next: NextFunction):
         });
 }
 
+/**
+ * Retrieves a specific player by ID.
+ */
 function readPlayer(request: Request, response: Response, next: NextFunction): void {
     db.oneOrNone('SELECT * FROM Player WHERE id=${id}', request.params)
         .then((data: Player | null): void => {
@@ -113,6 +121,11 @@ function readPlayer(request: Request, response: Response, next: NextFunction): v
         });
 }
 
+/**
+ * This function updates an existing player's information, returning the
+ * updated player's ID if successful, or a 404 status if the player doesn't
+ * exist.
+ */
 function updatePlayer(request: Request, response: Response, next: NextFunction): void {
     db.oneOrNone('UPDATE Player SET email=${body.email}, name=${body.name} WHERE id=${params.id} RETURNING id', {
         params: request.params,
@@ -126,8 +139,11 @@ function updatePlayer(request: Request, response: Response, next: NextFunction):
         });
 }
 
-// Creating a new player requires generating a new ID, which this function assumes
-// is being done automatically by the database when using the INSERT statement.
+/**
+ * This function creates a new player in the database based on the provided
+ * email and name, returning the newly created player's ID. The database is
+ * assumed to automatically assign a unique ID using auto-increment.
+ */
 function createPlayer(request: Request, response: Response, next: NextFunction): void {
     db.one('INSERT INTO Player(email, name) VALUES (${email}, ${name}) RETURNING id',
         request.body as PlayerInput
@@ -141,15 +157,23 @@ function createPlayer(request: Request, response: Response, next: NextFunction):
         });
 }
 
-// Deleting a player is a bit more complex because it requires deleting
-// all PlayerGame records that reference this player first.
+/**
+ * This function deletes an existing player based on ID.
+ *
+ * Deleting a player requires cascading deletion of PlayerGame records first to
+ * maintain referential integrity. This function uses a transaction (`tx()`) to
+ * ensure that both the PlayerGame records and the Player record are deleted
+ * atomically (i.e., either both operations succeed or both fail together).
+ *
+ * This function performs a "hard" delete that actually removes records from the
+ * database. Production systems generally to use "soft" deletes in which records
+ * are marked as archived/deleted rather than actually deleting them. This helps
+ * support data recovery and audit trails.
+ */
 function deletePlayer(request: Request, response: Response, next: NextFunction): void {
-    // Use a transaction (tx) to ensure that both deletions succeed or fail together.
     db.tx((t) => {
-        // First delete all PlayerGame records that reference this player
         return t.none('DELETE FROM PlayerGame WHERE playerID=${id}', request.params)
             .then(() => {
-                // Then delete the player record itself.
                 return t.oneOrNone('DELETE FROM Player WHERE id=${id} RETURNING id', request.params);
             });
     })

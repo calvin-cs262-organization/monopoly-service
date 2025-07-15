@@ -4,18 +4,18 @@ This is the data service application for the
 [CS 262 sample Monopoly project](https://github.com/calvin-cs262-organization/monopoly-project),
  which is deployed here:
 
-- <https://cs262-webservice.azurewebsites.net/><br>(This URL may vary from year to year.)
+- <https://cs262-egbefbd4aae2h0df.canadacentral-01.azurewebsites.net><br>(This URL may vary from year to year.)
 
 Based on this URL, the service implements the following endpoints:
 
 - `/` &mdash; a hello message
-- `/players` &mdash; a list of players
-- `/players/:id` &mdash; a single player with the given ID (e.g., `/players/1`)
+- `/players` &mdash; the full list of players
+- `/players/:id` &mdash; the single player with the given ID (e.g., `/players/1`)
 
 Also, it gives the following responses:
 
-- `/players/-1` &mdash; all invalid IDs like this one give a not found error
-- `/blob` &mdash; all undefined endpoints like this one give a (n uninformative) error message
+- `/players/-1` &mdash; all invalid IDs like this one return a not-found error
+- `/blob` &mdash; all undefined endpoints like this one return a cannot-get error.
 
 It is based on the [standard Azure App Service tutorial for Node.js](https://learn.microsoft.com/en-us/azure/app-service/quickstart-nodejs?tabs=linux&pivots=development-environment-cli).
 
