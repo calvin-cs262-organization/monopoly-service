@@ -17,8 +17,8 @@
  * networking firewall access list.
  *
  * To execute locally, run the following in Linux:
- *      source .env
- *      node --experimental-strip-types src/monopolyDirect.ts
+ *      source .env.sh
+ *      npm run direct
  *
  * @author: kvlinden
  * @date: Summer, 2020
