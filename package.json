@@ -3,7 +3,7 @@
     "version": "1.0.0",
     "description": "CS 262 Web service",
     "main": "src/monopolyService.ts",
-    "type":"module",
+    "type": "module",
     "author": "kvlinden",
     "license": "ISC",
     "engines": {
@@ -21,7 +21,7 @@
     },
     "devDependencies": {
         "@types/express": "^4.17.21",
-        "@types/node": "^20.19.7",
+        "@types/node": "^20.19.8",
         "@typescript-eslint/eslint-plugin": "^8.36.0",
         "@typescript-eslint/parser": "^8.36.0",
         "eslint": "9.x"
