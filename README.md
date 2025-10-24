@@ -1,5 +1,14 @@
 # CS 262 Monopoly Web Service
 
+
+
+[Hyperlink to root of running data service on Azure](https://monopoly-canadacentral-01-erfaede9brbfcqe8.canadacentral-01.azurewebsites.net/)
+
+
+
+
+
+
 This is the data service application for the
 [CS 262 sample Monopoly project](https://github.com/calvin-cs262-organization/monopoly-project),
  which is deployed here:
