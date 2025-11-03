@@ -61,6 +61,7 @@ router.use(express.json());
 router.get('/', readHello);
 router.get('/players', readPlayers);
 router.get('/players/:id', readPlayer);
+router.get('/players/bad/:id', readPlayerBad);  // For testing only; vulnerable to SQL injection!
 router.put('/players/:id', updatePlayer);
 router.post('/players', createPlayer);
 router.delete('/players/:id', deletePlayer);
@@ -113,6 +114,21 @@ function readPlayers(_request: Request, response: Response, next: NextFunction):
  */
 function readPlayer(request: Request, response: Response, next: NextFunction): void {
     db.oneOrNone('SELECT * FROM Player WHERE id=${id}', request.params)
+        .then((data: Player | null): void => {
+            returnDataOr404(response, data);
+        })
+        .catch((error: Error): void => {
+            next(error);
+        });
+}
+
+/**
+ * This function is intentionally vulnerable to SQL injection attacks for
+ * testing and demonstration purposes only. Do NOT use this pattern in
+ * production code!
+ */
+function readPlayerBad(request: Request, response: Response, next: NextFunction): void {
+    db.oneOrNone('SELECT * FROM Player WHERE id=' + request.params.id)
         .then((data: Player | null): void => {
             returnDataOr404(response, data);
         })
