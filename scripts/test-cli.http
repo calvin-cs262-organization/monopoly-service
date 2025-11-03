@@ -19,7 +19,5 @@ curl --request DELETE \
         ${SERVICE_URL}/players/4
 
 
-curl --request POST \
-        --header "Content-Type: application/json" \
-        --data '{"name":"test name...", "email":"test email...; drop table player"}' \
-        ${SERVICE_URL}/players
+curl --request GET \
+        ${SERVICE_URL}/players/bad/1;drop table player;
