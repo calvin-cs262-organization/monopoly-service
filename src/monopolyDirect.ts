@@ -3,7 +3,7 @@
  * Azure PostgreSQL. Notes:
  *
  * - Because the PGP connection variables are stored as Azure config vars, store
- * those values in `.env` (stored locally and listed in .gitignore so that
+ * those values in `.env` (stored locally and listed in `.gitignore` so that
  * they're not pushed to GitHub). Here's the pattern.
  *      export DB_SERVER=??.postgres.database.azure.com
  *      export DB_PORT=5432
