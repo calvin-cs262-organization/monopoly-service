@@ -22,7 +22,10 @@
  *     `https://cs262.azurewebsites.net/players/1;DELETE FROM Player`
  * which would delete records in the PlayerGame and then the Player tables.
  * In particular, we don't use JS template strings because this doesn't filter
- * client-supplied values properly.
+ * client-supplied values properly. We didn't do this, but we would also want to
+ * create and connect to a new PostgreSQL account with limited privileges for the
+ * application, rather than using the administrator account, which can get DB
+ * meta-information from the system tables.
  *
  * - The endpoints call `next(err)` to handle errors without crashing the service.
  * This initiates the default error handling middleware, which logs full error
@@ -33,7 +36,7 @@
  *
  * @author: kvlinden
  * @date: Summer, 2020
- * @date: Fall, 2025 (updated to JS->TS, Node version, and master->main repo)
+ * @date: Fall, 2025 (updated to JS->TS, Node version, master->main repo, added SQL injection examples)
  */
 
 import express from 'express';

