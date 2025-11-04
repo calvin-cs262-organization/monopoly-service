@@ -65,7 +65,8 @@ router.put('/players/:id', updatePlayer);
 router.post('/players', createPlayer);
 router.delete('/players/:id', deletePlayer);
 
-//router.get('/bad/players/:id', readPlayerBad);  // For testing only; vulnerable to SQL injection!
+// For testing only; vulnerable to SQL injection!
+router.get('/bad/players/:id', readPlayerBad);
 
 app.use(router);
 
@@ -127,6 +128,7 @@ function readPlayer(request: Request, response: Response, next: NextFunction): v
  * This function is intentionally vulnerable to SQL injection attacks because it:
  * - Directly concatenates user input into the SQL query string rather than using parameterized queries.
  * - Allows manyOrNone results, rather than the one it should expect.
+ * - Uses a PSQL administrator account, which has more privileges than a typical application account.
  * See `sql/test-cli.http` for example attack URLs and CURL commands.
  */
 function readPlayerBad(request: Request, response: Response, next: NextFunction): void {
