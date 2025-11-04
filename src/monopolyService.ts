@@ -65,7 +65,7 @@ router.put('/players/:id', updatePlayer);
 router.post('/players', createPlayer);
 router.delete('/players/:id', deletePlayer);
 
-router.get('/bad/players/:id', readPlayerBad);  // For testing only; vulnerable to SQL injection!
+//router.get('/bad/players/:id', readPlayerBad);  // For testing only; vulnerable to SQL injection!
 
 app.use(router);
 
