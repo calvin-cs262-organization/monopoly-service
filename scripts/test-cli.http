@@ -19,5 +19,6 @@ curl --request DELETE \
         ${SERVICE_URL}/players/4
 
 
+# URL: https://cs262-webservice-abebhtekgegdb2as.canadacentral-01.azurewebsites.net/players/bad/1%20or%201=1
 curl --request GET \
-        ${SERVICE_URL}/players/bad/1;drop table player;
+        ${SERVICE_URL}/players/bad/1 or 1=1

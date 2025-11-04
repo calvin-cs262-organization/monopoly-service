@@ -61,10 +61,11 @@ router.use(express.json());
 router.get('/', readHello);
 router.get('/players', readPlayers);
 router.get('/players/:id', readPlayer);
-router.get('/players/bad/:id', readPlayerBad);  // For testing only; vulnerable to SQL injection!
 router.put('/players/:id', updatePlayer);
 router.post('/players', createPlayer);
 router.delete('/players/:id', deletePlayer);
+
+router.get('/bad/players/:id', readPlayerBad);  // For testing only; vulnerable to SQL injection!
 
 app.use(router);
 
@@ -123,13 +124,14 @@ function readPlayer(request: Request, response: Response, next: NextFunction): v
 }
 
 /**
- * This function is intentionally vulnerable to SQL injection attacks for
- * testing and demonstration purposes only. Do NOT use this pattern in
- * production code!
+ * This function is intentionally vulnerable to SQL injection attacks because it:
+ * - Directly concatenates user input into the SQL query string rather than using parameterized queries.
+ * - Allows manyOrNone results, rather than the one it should expect.
+ * See `sql/test-cli.http` for example attack URLs and CURL commands.
  */
 function readPlayerBad(request: Request, response: Response, next: NextFunction): void {
-    db.oneOrNone('SELECT * FROM Player WHERE id=' + request.params.id)
-        .then((data: Player | null): void => {
+    db.manyOrNone('SELECT * FROM Player WHERE id=' + request.params.id)
+        .then((data: Player[] | null): void => {
             returnDataOr404(response, data);
         })
         .catch((error: Error): void => {
