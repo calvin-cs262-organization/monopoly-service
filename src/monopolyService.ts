@@ -73,6 +73,18 @@ router.delete('/players/:id', deletePlayer);
 
 app.use(router);
 
+// Custom error handler - must be defined AFTER all routes
+app.use((err: Error, _req: Request, res: Response, _next: NextFunction): void => {
+    // Log the full error server-side for debugging
+    console.error('Error:', err.message);
+    console.error('Stack:', err.stack);
+
+    // Send generic error to client (never expose internal details)
+    res.status(500).json({
+        error: 'An internal server error occurred'
+    });
+});
+
 app.listen(port, (): void => {
     console.log(`Listening on port ${port}`);
 });
