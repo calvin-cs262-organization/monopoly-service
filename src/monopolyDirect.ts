@@ -3,9 +3,14 @@
  * Azure PostgreSQL. Notes:
  *
  * - Because the PGP connection variables are stored as Azure config vars, store
- * those values in `.env.sh` (stored locally and listed in .gitignore so that
- * they're not pushed to GitHub). E.g., one line in this file would be:
+ * those values in `.env` (stored locally and listed in `.gitignore` so that
+ * they're not pushed to GitHub). Here's the pattern.
+ *      export DB_SERVER=??.postgres.database.azure.com
  *      export DB_PORT=5432
+ *      export DB_DATABASE=postgres
+ *      export DB_USER=??
+ *      export DB_PASSWORD=??
+ *      export NODE_ENV=production
  *
  * - Directly accessing the database in this manner is not suitable for
  * production use.
@@ -17,7 +22,7 @@
  * networking firewall access list.
  *
  * To execute locally, run the following in Linux:
- *      source .env.sh
+ *      source .env
  *      npm run direct
  *
  * @author: kvlinden

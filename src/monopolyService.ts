@@ -22,7 +22,10 @@
  *     `https://cs262.azurewebsites.net/players/1;DELETE FROM Player`
  * which would delete records in the PlayerGame and then the Player tables.
  * In particular, we don't use JS template strings because this doesn't filter
- * client-supplied values properly.
+ * client-supplied values properly. We didn't do this, but we would also want to
+ * create and connect to a new PostgreSQL account with limited privileges for the
+ * application, rather than using the administrator account, which can get DB
+ * meta-information from the system tables.
  *
  * - The endpoints call `next(err)` to handle errors without crashing the service.
  * This initiates the default error handling middleware, which logs full error
@@ -33,7 +36,7 @@
  *
  * @author: kvlinden
  * @date: Summer, 2020
- * @date: Fall, 2025 (updated to JS->TS, Node version, and master->main repo)
+ * @date: Fall, 2025 (updated to JS->TS, Node version, master->main repo, added SQL injection examples)
  */
 
 import express from 'express';
@@ -64,9 +67,9 @@ router.get('/players/:id', readPlayer);
 router.put('/players/:id', updatePlayer);
 router.post('/players', createPlayer);
 router.delete('/players/:id', deletePlayer);
-router.get('/games', readGames);
-router.get('/games/:id', readGame);
-router.delete('/games/:id', deleteGame);
+
+// For testing only; vulnerable to SQL injection!
+router.get('/bad/players/:id', readPlayerBad);
 
 app.use(router);
 
@@ -117,6 +120,23 @@ function readPlayers(_request: Request, response: Response, next: NextFunction):
 function readPlayer(request: Request, response: Response, next: NextFunction): void {
     db.oneOrNone('SELECT * FROM Player WHERE id=${id}', request.params)
         .then((data: Player | null): void => {
+            returnDataOr404(response, data);
+        })
+        .catch((error: Error): void => {
+            next(error);
+        });
+}
+
+/**
+ * This function is intentionally vulnerable to SQL injection attacks because it:
+ * - Directly concatenates user input into the SQL query string rather than using parameterized queries.
+ * - Allows manyOrNone results, rather than the one it should expect.
+ * - Uses a PSQL administrator account, which has more privileges than a typical application account.
+ * See `sql/test-cli.http` for example attack URLs and CURL commands.
+ */
+function readPlayerBad(request: Request, response: Response, next: NextFunction): void {
+    db.manyOrNone('SELECT * FROM Player WHERE id=' + request.params.id)
+        .then((data: Player[] | null): void => {
             returnDataOr404(response, data);
         })
         .catch((error: Error): void => {
@@ -178,53 +198,6 @@ function deletePlayer(request: Request, response: Response, next: NextFunction):
         return t.none('DELETE FROM PlayerGame WHERE playerID=${id}', request.params)
             .then(() => {
                 return t.oneOrNone('DELETE FROM Player WHERE id=${id} RETURNING id', request.params);
-            });
-    })
-        .then((data: { id: number } | null): void => {
-            returnDataOr404(response, data);
-        })
-        .catch((error: Error): void => {
-            next(error);
-        });
-}
-
-/**
- * Retrieves all games from the database.
- */
-function readGames(_request: Request, response: Response, next: NextFunction): void {
-    db.manyOrNone('SELECT * FROM Game')
-        .then((data: unknown[]): void => {
-            response.send(data);
-        })
-        .catch((error: Error): void => {
-            next(error);
-        });
-}
-
-/**
- * Retrieves the name and score for every player who played in the specified game.
- */
-function readGame(request: Request, response: Response, next: NextFunction): void {
-    db.manyOrNone('SELECT Player.name, PlayerGame.score FROM Player INNER JOIN PlayerGame ON Player.id = PlayerGame.playerID WHERE PlayerGame.gameID=${id}', request.params)
-        .then((data: unknown[]): void => {
-            response.send(data);
-        })
-        .catch((error: Error): void => {
-            next(error);
-        });
-}
-
-/**
- * This function deletes an existing game based on ID.
- */
-function deleteGame(request: Request, response: Response, next: NextFunction): void {
-    db.tx((t) => {
-        return t.none('DELETE FROM PlayerGame WHERE gameID=${id}', request.params)
-            .then(() => {
-                return t.none('DELETE FROM PropertyOwnership WHERE gameID=${id}', request.params);
-            })
-            .then(() => {
-                return t.oneOrNone('DELETE FROM Game WHERE id=${id} RETURNING id', request.params);
             });
     })
         .then((data: { id: number } | null): void => {
