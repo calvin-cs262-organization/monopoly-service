@@ -21,3 +21,6 @@ curl --request GET \
 # URL: .../bad/players/1; select table_name,column_name,data_type from information_schema.columns where table_name='player';
 curl --request GET \
         ${SERVICE_URL}/bad/players/1%3B%20select%20table_name,column_name,data_type%20from%20information_schema.columns%20where%20table_name%3D%27player%27
+
+# Note that in PostgreSQL, all users need read access to the pg_admin tables. To limit
+# access, we'd need to limit restuser to DML access only, with DDL access revoked.
