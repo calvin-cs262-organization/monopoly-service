@@ -69,7 +69,7 @@ router.post('/players', createPlayer);
 router.delete('/players/:id', deletePlayer);
 
 // For testing only; vulnerable to SQL injection!
-router.get('/bad/players/:id', readPlayerBad);
+// router.get('/bad/players/:id', readPlayerBad);
 
 app.use(router);
 
@@ -134,15 +134,15 @@ function readPlayer(request: Request, response: Response, next: NextFunction): v
  * - Uses a PSQL administrator account, which has more privileges than a typical application account.
  * See `sql/test-cli.http` for example attack URLs and CURL commands.
  */
-function readPlayerBad(request: Request, response: Response, next: NextFunction): void {
-    db.manyOrNone('SELECT * FROM Player WHERE id=' + request.params.id)
-        .then((data: Player[] | null): void => {
-            returnDataOr404(response, data);
-        })
-        .catch((error: Error): void => {
-            next(error);
-        });
-}
+// function readPlayerBad(request: Request, response: Response, next: NextFunction): void {
+//     db.manyOrNone('SELECT * FROM Player WHERE id=' + request.params.id)
+//         .then((data: Player[] | null): void => {
+//             returnDataOr404(response, data);
+//         })
+//         .catch((error: Error): void => {
+//             next(error);
+//         });
+// }
 
 /**
  * This function updates an existing player's information, returning the
