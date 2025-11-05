@@ -38,7 +38,7 @@ const database = pgp({
     port: parseInt(process.env.DB_PORT as string) || 5432,
     database: process.env.DB_DATABASE,
     user: process.env.DB_USER,
-    password: process.env.DB_PASSWORD,
+    password: process.env.DB_PASSWORD as string,
     // For SSL, see: https://stackoverflow.com/questions/22301722/ssl-for-postgresql-connection-nodejs
     ssl: true,
 });

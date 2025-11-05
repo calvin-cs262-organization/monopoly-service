@@ -26,6 +26,11 @@ Also, it gives the following responses:
 - `/players/-1` &mdash; all invalid IDs like this one return a not-found error
 - `/blob` &mdash; all undefined endpoints like this one return a cannot-get error.
 
+Game Endpoints
+
+- `/`games &mdash;  returns the full list of games
+- `/`games/:id &mdash; returns the name and score for every player who played in the specified game (e.g., /games/2 returns all players from game 2)
+
 It is based on the [standard Azure App Service tutorial for Node.js](https://learn.microsoft.com/en-us/azure/app-service/quickstart-nodejs?tabs=linux&pivots=development-environment-cli).
 
 The database is relational with the schema specified in the `sql/` sub-directory

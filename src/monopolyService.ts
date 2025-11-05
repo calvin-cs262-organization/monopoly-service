@@ -64,6 +64,9 @@ router.get('/players/:id', readPlayer);
 router.put('/players/:id', updatePlayer);
 router.post('/players', createPlayer);
 router.delete('/players/:id', deletePlayer);
+router.get('/games', readGames);
+router.get('/games/:id', readGame);
+router.delete('/games/:id', deleteGame);
 
 app.use(router);
 
@@ -175,6 +178,53 @@ function deletePlayer(request: Request, response: Response, next: NextFunction):
         return t.none('DELETE FROM PlayerGame WHERE playerID=${id}', request.params)
             .then(() => {
                 return t.oneOrNone('DELETE FROM Player WHERE id=${id} RETURNING id', request.params);
+            });
+    })
+        .then((data: { id: number } | null): void => {
+            returnDataOr404(response, data);
+        })
+        .catch((error: Error): void => {
+            next(error);
+        });
+}
+
+/**
+ * Retrieves all games from the database.
+ */
+function readGames(_request: Request, response: Response, next: NextFunction): void {
+    db.manyOrNone('SELECT * FROM Game')
+        .then((data: unknown[]): void => {
+            response.send(data);
+        })
+        .catch((error: Error): void => {
+            next(error);
+        });
+}
+
+/**
+ * Retrieves the name and score for every player who played in the specified game.
+ */
+function readGame(request: Request, response: Response, next: NextFunction): void {
+    db.manyOrNone('SELECT Player.name, PlayerGame.score FROM Player INNER JOIN PlayerGame ON Player.id = PlayerGame.playerID WHERE PlayerGame.gameID=${id}', request.params)
+        .then((data: unknown[]): void => {
+            response.send(data);
+        })
+        .catch((error: Error): void => {
+            next(error);
+        });
+}
+
+/**
+ * This function deletes an existing game based on ID.
+ */
+function deleteGame(request: Request, response: Response, next: NextFunction): void {
+    db.tx((t) => {
+        return t.none('DELETE FROM PlayerGame WHERE gameID=${id}', request.params)
+            .then(() => {
+                return t.none('DELETE FROM PropertyOwnership WHERE gameID=${id}', request.params);
+            })
+            .then(() => {
+                return t.oneOrNone('DELETE FROM Game WHERE id=${id} RETURNING id', request.params);
             });
     })
         .then((data: { id: number } | null): void => {
