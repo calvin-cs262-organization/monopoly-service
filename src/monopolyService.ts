@@ -194,6 +194,9 @@ function deletePlayer(request: Request, response: Response, next: NextFunction):
         });
 }
 
+
+
+
 // Homework 3 Functions
 function readGames(_request: Request, response: Response, next: NextFunction): void {
     db.manyOrNone('SELECT * FROM Game')
@@ -218,7 +221,7 @@ function readGame(request: Request, response: Response, next: NextFunction): voi
 
 function deleteGame(request: Request, response: Response, next: NextFunction): void {
     db.tx((t) => {
-        return t.none('DELETE FROM PlayerGame WHERE playerID=${id}', request.params)
+        return t.none('DELETE FROM PlayerGame WHERE gameID=${id}', request.params)
             .then(() => {
                 return t.oneOrNone('DELETE FROM Game WHERE id=${id} RETURNING id', request.params);
             });
