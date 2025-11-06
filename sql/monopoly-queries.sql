@@ -22,10 +22,10 @@ SELECT *
  ;
 
 -- Get the highest score ever recorded.
-  SELECT score
-    FROM PlayerGame
-ORDER BY score DESC
-   LIMIT 1
+SELECT score
+  FROM PlayerGame
+  ORDER BY score DESC
+  LIMIT 1
    ;
 
 -- Get the cross-product of all the tables.

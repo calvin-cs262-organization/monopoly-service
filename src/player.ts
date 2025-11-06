@@ -15,3 +15,8 @@ export interface PlayerInput {
     email: string;
     name: string;
 }
+
+export interface MonopolyGame {
+    id: number;
+    time: string;
+}
