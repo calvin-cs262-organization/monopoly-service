@@ -22,5 +22,7 @@ curl --request GET \
 curl --request GET \
         ${SERVICE_URL}/bad/players/1%3B%20select%20table_name,column_name,data_type%20from%20information_schema.columns%20where%20table_name%3D%27player%27
 
-# Note that in PostgreSQL, all users need read access to the pg_admin tables. To limit
-# access, we'd need to limit restuser to DML access only, with DDL access revoked.
+# Note that in PostgreSQL, users need read access to the pg_admin tables. To limit
+# access, we'd need to limit restuser to DML but not DDL access. This turns out
+# to be a bit tricker than may be appropriate for CS 262; I'd probably just need
+# to figure it out and give them the code.

@@ -14,7 +14,7 @@
  * See the DB_* variables used by pgPromise.
  *
  * - To execute locally, run the following:
- *      source .env.sh
+ *      source .env
  *      npm start
  *
  * - To guard against SQL injection attacks, this code uses pgPromise's built-in
@@ -142,9 +142,9 @@ function readPlayer(request: Request, response: Response, next: NextFunction): v
 /**
  * This function is intentionally vulnerable to SQL injection attacks because it:
  * - Directly concatenates user input into the SQL query string rather than using parameterized queries.
- * - Allows manyOrNone results, rather than the one it should expect.
- * - Uses a PSQL administrator account, which has more privileges than a typical application account.
- * See `sql/test-cli.http` for example attack URLs and CURL commands.
+ * - Allows manyOrNone results, rather than the zero-or-one it should expect.
+ * - Uses a PSQL administrator account, which has more privileges than it needs.
+ * See `sql/test-sqlInjection.http` for example attack URLs and CURL commands.
  */
 // function readPlayerBad(request: Request, response: Response, next: NextFunction): void {
 //     db.manyOrNone('SELECT * FROM Player WHERE id=' + request.params.id)
