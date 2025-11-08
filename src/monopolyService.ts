@@ -74,6 +74,9 @@ router.get('/games', readGames);
 router.get('/games/:id', readGame);
 router.delete('/games/:id', deleteGame);
 
+// Project routes
+router.get('/adventures', readAdventures);
+
 app.use(router);
 
 app.listen(port, (): void => {
@@ -234,3 +237,30 @@ function deleteGame(request: Request, response: Response, next: NextFunction): v
         });
 
 }
+
+
+
+
+
+/* 
+PROJECT ROUTES
+*/
+function readAdventures(request: Request, response: Response, next: NextFunction): void {
+    // db.oneOrNone('SELECT * FROM Adventure', request.params)
+    //     .then((data: Player | null): void => {
+    //         returnDataOr404(response, data);
+    //     })
+    //     .catch((error: Error): void => {
+    //         next(error);
+    //     });
+
+    // For now, return a sample adventure since Adventure table doesn't exist
+    const sampleAdventure = {
+        id: 1,
+        name: "Monopoly Adventure",
+        description: "A thrilling game of property acquisition",
+        difficulty: 3
+    };
+    response.send(sampleAdventure);
+}
+
