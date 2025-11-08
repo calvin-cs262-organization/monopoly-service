@@ -74,8 +74,10 @@ router.get('/games', readGames);
 router.get('/games/:id', readGame);
 router.delete('/games/:id', deleteGame);
 
-// Project routes
+// Project routes (ignore for Lab/HW)
 router.get('/adventures', readAdventures);
+router.get('/adventuresInRegion/:id', readAdventuresByRegion);
+
 
 app.use(router);
 
@@ -245,6 +247,7 @@ function deleteGame(request: Request, response: Response, next: NextFunction): v
 /* 
 PROJECT ROUTES
 */
+// Get all adventures
 function readAdventures(request: Request, response: Response, next: NextFunction): void {
     db.manyOrNone('SELECT * FROM Adventure')
         .then((data: any[]): void => {
@@ -253,14 +256,17 @@ function readAdventures(request: Request, response: Response, next: NextFunction
         .catch((error: Error): void => {
             next(error);
         });
-
-    // // For now, return a sample adventure since Adventure table doesn't exist
-    // const sampleAdventure = {
-    //     id: 1,
-    //     name: "Monopoly Adventure",
-    //     description: "A thrilling game of property acquisition",
-    //     difficulty: 3
-    // };
-    // response.send(sampleAdventure);
 }
 
+// Get all adventures in region 
+function readAdventuresByRegion(request: Request, response: Response, next: NextFunction): void {
+    db.oneOrNone(
+        'SELECT * FROM Adventure WHERE regionID=${id}'
+        , request.params)
+        .then((data: Player | null): void => {
+            returnDataOr404(response, data);
+        })
+        .catch((error: Error): void => {
+            next(error);
+        });
+}
