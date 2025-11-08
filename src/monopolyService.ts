@@ -260,11 +260,11 @@ function readAdventures(request: Request, response: Response, next: NextFunction
 
 // Get all adventures in region 
 function readAdventuresByRegion(request: Request, response: Response, next: NextFunction): void {
-    db.oneOrNone(
+    db.manyOrNone(
         'SELECT * FROM Adventure WHERE regionID=${id}'
         , request.params)
-        .then((data: Player | null): void => {
-            returnDataOr404(response, data);
+        .then((data: any[]): void => {
+            response.send(data);
         })
         .catch((error: Error): void => {
             next(error);
