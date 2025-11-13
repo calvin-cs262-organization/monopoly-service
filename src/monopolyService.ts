@@ -38,6 +38,7 @@
 
 import dotenv from 'dotenv';
 import express from 'express';
+import cors from 'cors';
 import pgPromise from 'pg-promise';
 
 // Load environment variables from .env file
@@ -60,6 +61,13 @@ const db = pgPromise()({
 const app = express();
 const port: number = parseInt(process.env.PORT as string) || 3000;
 const router = express.Router();
+
+// Configure CORS to allow cross-origin requests
+app.use(cors({
+    origin: ['http://localhost:3000', 'http://localhost:3001', 'https://cs262lab09-bqekb7ezfnhxctc7.canadacentral-01.azurewebsites.net'],
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    credentials: true
+}));
 
 router.use(express.json());
 router.get('/', readHello);
