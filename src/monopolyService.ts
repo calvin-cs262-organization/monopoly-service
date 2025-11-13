@@ -64,7 +64,14 @@ const router = express.Router();
 
 // Configure CORS to allow cross-origin requests
 app.use(cors({
-    origin: ['http://localhost:3000', 'http://localhost:3001', 'https://cs262lab09-bqekb7ezfnhxctc7.canadacentral-01.azurewebsites.net'],
+    origin: [
+        'http://localhost:3000', 
+        'http://localhost:3001', 
+        'http://localhost:8081',  // Expo default port
+        'exp://localhost:19000',  // Expo development URLs
+        'http://localhost:19006', // Expo web port
+        'https://cs262lab09-bqekb7ezfnhxctc7.canadacentral-01.azurewebsites.net'
+    ],
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
     credentials: true
 }));
