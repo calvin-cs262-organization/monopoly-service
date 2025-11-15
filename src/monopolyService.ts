@@ -89,9 +89,15 @@ router.get('/games', readGames);
 router.get('/games/:id', readGame);
 router.delete('/games/:id', deleteGame);
 
-// Project routes (ignore for Lab/HW)
+
+
+// Project routes (ignore for Lab/HW) //
 router.get('/adventures', readAdventures);
 router.get('/adventuresInRegion/:id', readAdventuresByRegion);
+
+/*  Profile Page  */
+router.get('/adventurer/:id', readAdventurer);
+router.get('/readAdventuresCompletedByAdventurer/:id', readAdventuresCompletedByAdventurer)
 
 
 app.use(router);
@@ -113,6 +119,66 @@ function returnDataOr404(response: Response, data: unknown): void {
     }
 }
 
+/* 
+PROJECT ROUTES
+*/
+// Get all adventures
+function readAdventures(request: Request, response: Response, next: NextFunction): void {
+    db.manyOrNone('SELECT * FROM Adventure')
+        .then((data: any[]): void => {
+            response.send(data);
+        })
+        .catch((error: Error): void => {
+            next(error);
+        });
+}
+
+// Get all adventures in region 
+function readAdventuresByRegion(request: Request, response: Response, next: NextFunction): void {
+    db.manyOrNone(
+        'SELECT * FROM Adventure WHERE regionID=${id}'
+        , request.params)
+        .then((data: any[]): void => {
+            response.send(data);
+        })
+        .catch((error: Error): void => {
+            next(error);
+        });
+}
+
+/*  Profile Page  */
+// Get Adventurer data
+function readAdventurer(request: Request, response: Response, next: NextFunction): void {
+    db.manyOrNone(
+        'SELECT * FROM Adventurer WHERE adventurerID=${id}'
+        , request.params)
+        .then((data: any[]): void => {
+            response.send(data);
+        })
+        .catch((error: Error): void => {
+            next(error);
+        });
+}
+// Get all completed adventures by adventurer
+function readAdventuresCompletedByAdventurer(request: Request, response: Response, next: NextFunction): void {
+    db.manyOrNone(
+        'SELECT COUNT(*) FROM Adventur WHERE adventurerID=${id}'
+        , request.params)
+        .then((data: any[]): void => {
+            response.send(data);
+        })
+        .catch((error: Error): void => {
+            next(error);
+        });
+}
+
+
+
+
+
+
+
+// LAB/HW ROUTERS //
 /**
  * This endpoint returns a simple hello-world message, serving as a basic
  * health check and welcome message for the API.
@@ -253,35 +319,4 @@ function deleteGame(request: Request, response: Response, next: NextFunction): v
             next(error);
         });
 
-}
-
-
-
-
-
-/* 
-PROJECT ROUTES
-*/
-// Get all adventures
-function readAdventures(request: Request, response: Response, next: NextFunction): void {
-    db.manyOrNone('SELECT * FROM Adventure')
-        .then((data: any[]): void => {
-            response.send(data);
-        })
-        .catch((error: Error): void => {
-            next(error);
-        });
-}
-
-// Get all adventures in region 
-function readAdventuresByRegion(request: Request, response: Response, next: NextFunction): void {
-    db.manyOrNone(
-        'SELECT * FROM Adventure WHERE regionID=${id}'
-        , request.params)
-        .then((data: any[]): void => {
-            response.send(data);
-        })
-        .catch((error: Error): void => {
-            next(error);
-        });
 }
