@@ -254,13 +254,13 @@ function readAdventures(request: Request, response: Response, next: NextFunction
             next(error);
         });
 
-    // For now, return a sample adventure since Adventure table doesn't exist
-    const sampleAdventure = {
-        id: 1,
-        name: "Monopoly Adventure",
-        description: "A thrilling game of property acquisition",
-        difficulty: 3
-    };
-    response.send(sampleAdventure);
+    // // For now, return a sample adventure since Adventure table doesn't exist
+    // const sampleAdventure = {
+    //     id: 1,
+    //     name: "Monopoly Adventure",
+    //     description: "A thrilling game of property acquisition",
+    //     difficulty: 3
+    // };
+    // response.send(sampleAdventure);
 }
 
