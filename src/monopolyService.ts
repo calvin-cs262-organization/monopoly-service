@@ -38,6 +38,7 @@
 
 import dotenv from 'dotenv';
 import express from 'express';
+import cors from 'cors';
 import pgPromise from 'pg-promise';
 
 // Load environment variables from .env file
@@ -61,6 +62,20 @@ const app = express();
 const port: number = parseInt(process.env.PORT as string) || 3000;
 const router = express.Router();
 
+// Configure CORS to allow cross-origin requests
+app.use(cors({
+    origin: [
+        'http://localhost:3000', 
+        'http://localhost:3001', 
+        'http://localhost:8081',  // Expo default port
+        'exp://localhost:19000',  // Expo development URLs
+        'http://localhost:19006', // Expo web port
+        'https://cs262lab09-bqekb7ezfnhxctc7.canadacentral-01.azurewebsites.net'
+    ],
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    credentials: true
+}));
+
 router.use(express.json());
 router.get('/', readHello);
 router.get('/players', readPlayers);
@@ -74,8 +89,16 @@ router.get('/games', readGames);
 router.get('/games/:id', readGame);
 router.delete('/games/:id', deleteGame);
 
-// Project routes
+
+
+// Project routes (ignore for Lab/HW) //
 router.get('/adventures', readAdventures);
+router.get('/adventuresInRegion/:id', readAdventuresByRegion);
+
+/*  Profile Page  */
+router.get('/adventurer/:id', readAdventurer);
+router.get('/readAdventuresCompletedByAdventurer/:id', readAdventuresCompletedByAdventurer)
+
 
 app.use(router);
 
@@ -96,6 +119,66 @@ function returnDataOr404(response: Response, data: unknown): void {
     }
 }
 
+/* 
+PROJECT ROUTES
+*/
+// Get all adventures
+function readAdventures(request: Request, response: Response, next: NextFunction): void {
+    db.manyOrNone('SELECT * FROM Adventure')
+        .then((data: any[]): void => {
+            response.send(data);
+        })
+        .catch((error: Error): void => {
+            next(error);
+        });
+}
+
+// Get all adventures in region 
+function readAdventuresByRegion(request: Request, response: Response, next: NextFunction): void {
+    db.manyOrNone(
+        'SELECT * FROM Adventure WHERE regionID=${id}'
+        , request.params)
+        .then((data: any[]): void => {
+            response.send(data);
+        })
+        .catch((error: Error): void => {
+            next(error);
+        });
+}
+
+/*  Profile Page  */
+// Get Adventurer data
+function readAdventurer(request: Request, response: Response, next: NextFunction): void {
+    db.manyOrNone(
+        'SELECT * FROM Adventurer WHERE adventurerID=${id}'
+        , request.params)
+        .then((data: any[]): void => {
+            response.send(data);
+        })
+        .catch((error: Error): void => {
+            next(error);
+        });
+}
+// Get all completed adventures by adventurer
+function readAdventuresCompletedByAdventurer(request: Request, response: Response, next: NextFunction): void {
+    db.manyOrNone(
+        'SELECT COUNT(*) FROM Adventur WHERE adventurerID=${id}'
+        , request.params)
+        .then((data: any[]): void => {
+            response.send(data);
+        })
+        .catch((error: Error): void => {
+            next(error);
+        });
+}
+
+
+
+
+
+
+
+// LAB/HW ROUTERS //
 /**
  * This endpoint returns a simple hello-world message, serving as a basic
  * health check and welcome message for the API.
