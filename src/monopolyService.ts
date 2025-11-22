@@ -40,25 +40,19 @@
  */
 
 import express from "express";
-import pgPromise from "pg-promise";
 
 // Import types for compile-time checking.
 import type { Request, Response, NextFunction } from "express";
 import type { Player, PlayerInput } from "./player.ts";
 import type { Game } from "./game.ts";
-
-// Set up the database
-const db = pgPromise()({
-  host: process.env.DB_SERVER,
-  port: parseInt(process.env.DB_PORT as string) || 5432,
-  database: process.env.DB_DATABASE,
-  user: process.env.DB_USER,
-  password: process.env.DB_PASSWORD,
-});
+import { db } from "./db.ts";
 
 // Configure the server and its routes
 const app = express();
-const port: number = parseInt(process.env.PORT as string) || 3000;
+const port: number = Number(process.env.PORT) || 5432;
+
+console.log(process.env.DB_PASSWORD);
+
 const router = express.Router();
 
 router.use(express.json());
