@@ -45,13 +45,12 @@ import express from "express";
 import type { Request, Response, NextFunction } from "express";
 import type { Player, PlayerInput } from "./player.ts";
 import type { Game } from "./game.ts";
+import type { PlayerData } from "./playerdata.ts";
 import { db } from "./db.ts";
 
 // Configure the server and its routes
 const app = express();
-const port: number = Number(process.env.PORT) || 5432;
-
-console.log(process.env.DB_PASSWORD);
+const port: number = Number(process.env.DB_PORT) || 3000;
 
 const router = express.Router();
 
@@ -275,8 +274,11 @@ function readGame(
   response: Response,
   next: NextFunction
 ): void {
-  db.oneOrNone("SELECT * FROM Game WHERE id=${id}", request.params)
-    .then((data: Game | null): void => {
+  db.oneOrNone(
+    "SELECT Player.name, PlayerGame.score FROM PlayerGame, Player WHERE PlayerGame.gameID={id} AND PlayerGame.playerID = Player.ID",
+    request.params
+  )
+    .then((data: PlayerData | null): void => {
       returnDataOr404(response, data);
     })
     .catch((error: Error): void => {
