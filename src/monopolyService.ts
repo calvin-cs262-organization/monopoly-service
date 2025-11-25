@@ -1,3 +1,4 @@
+//NOTE: for changes to apply, you have to push it to Github
 /**
  * This module implements a REST-inspired web service for the Monopoly DB hosted
  * on PostgreSQL for Azure. Notes:
@@ -274,7 +275,7 @@ function readGame(
   response: Response,
   next: NextFunction
 ): void {
-  db.oneOrNone(
+  db.manyOrNone(
     "SELECT Player.name, PlayerGame.score FROM PlayerGame, Player WHERE PlayerGame.gameID=${id} AND PlayerGame.playerID=Player.ID",
     request.params
   )
