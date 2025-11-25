@@ -275,7 +275,7 @@ function readGame(
   next: NextFunction
 ): void {
   db.oneOrNone(
-    "SELECT Player.name, PlayerGame.score FROM PlayerGame, Player WHERE PlayerGame.gameID={id} AND PlayerGame.playerID = Player.ID",
+    "SELECT Player.name, PlayerGame.score FROM PlayerGame, Player WHERE PlayerGame.gameID=${id} AND PlayerGame.playerID=Player.ID",
     request.params
   )
     .then((data: PlayerData | null): void => {
